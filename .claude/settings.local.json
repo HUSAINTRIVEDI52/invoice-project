@@ -13,7 +13,8 @@
       "Bash(xargs -r taskkill //F //PID)",
       "Bash(findstr \"LISTENING\")",
       "Bash(findstr \":3000 :3001 :3002\")",
-      "Bash(taskkill *)"
+      "Bash(taskkill *)",
+      "Bash(npm test *)"
     ]
   }
 }

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getSession, login } from "@/lib/auth";
 
+export const dynamic = 'force-dynamic';
+
 async function loginAction(formData: FormData) {
   "use server";
   const email = String(formData.get("email") ?? "");

@@ -5,6 +5,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { activeFilterLabel, buildPaymentWhere, searchParamsFromUrl } from "@/lib/reportFilters";
 
 export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const filters = searchParamsFromUrl(request.url);

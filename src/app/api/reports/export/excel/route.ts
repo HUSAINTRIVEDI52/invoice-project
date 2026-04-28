@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { activeFilterLabel, buildPaymentWhere, searchParamsFromUrl } from "@/lib/reportFilters";
 
+export const dynamic = 'force-dynamic';
+
 function csvCell(value: string | number) {
   return `"${String(value).replaceAll('"', '""')}"`;
 }

@@ -6,6 +6,8 @@ import { currentPeriod } from "@/lib/format";
 import { SelectInput, TextArea, TextInput } from "@/components/FormField";
 import { logActivity } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic';
+
 async function createPayment(formData: FormData) {
   "use server";
   const data = paymentSchema.parse(Object.fromEntries(formData));

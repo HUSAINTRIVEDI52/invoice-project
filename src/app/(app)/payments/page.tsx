@@ -5,6 +5,8 @@ import { ConfirmButton } from "@/components/ConfirmButton";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { logActivity } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic';
+
 async function deletePayment(id: string) {
   "use server";
   const payment = await prisma.payment.delete({ where: { id }, include: { student: true } });

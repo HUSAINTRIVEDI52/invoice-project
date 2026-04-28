@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { calculatePendingForStudent } from "@/lib/reports";
 
+export const dynamic = 'force-dynamic';
+
 export default async function StudentProfilePage({ params }: { params: { id: string } }) {
   const [student, settings] = await Promise.all([
     prisma.student.findUnique({ where: { id: params.id }, include: { standard: { include: { feeStructures: true } }, payments: { orderBy: { paymentDate: "desc" } } } }),

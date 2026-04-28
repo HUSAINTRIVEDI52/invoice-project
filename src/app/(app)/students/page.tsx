@@ -6,6 +6,8 @@ import { SelectInput, TextArea, TextInput } from "@/components/FormField";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { logActivity } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic';
+
 async function createStudent(formData: FormData) {
   "use server";
   const parsed = studentSchema.parse(Object.fromEntries(formData));

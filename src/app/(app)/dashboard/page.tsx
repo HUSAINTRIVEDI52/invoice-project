@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db";
 import { formatCurrency } from "@/lib/format";
 import { calculatePendingForStudent } from "@/lib/reports";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
   const [students, standards, payments, settings] = await Promise.all([
     prisma.student.findMany({ include: { standard: { include: { feeStructures: true } }, payments: true } }),

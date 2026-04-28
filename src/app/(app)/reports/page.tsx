@@ -4,6 +4,8 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { activeFilterLabel, buildPaymentWhere, paymentModes, type ReportsSearchParams } from "@/lib/reportFilters";
 import { calculatePendingForStudent } from "@/lib/reports";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ReportsPage({ searchParams }: { searchParams: ReportsSearchParams }) {
   const paymentWhere = buildPaymentWhere(searchParams);
   const queryString = new URLSearchParams(Object.entries(searchParams).filter(([, value]) => value)).toString();

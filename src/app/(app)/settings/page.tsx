@@ -3,6 +3,8 @@ import { prisma } from "@/lib/db";
 import { settingsSchema } from "@/lib/validation";
 import { TextInput } from "@/components/FormField";
 
+export const dynamic = 'force-dynamic';
+
 async function saveSettings(formData: FormData) {
   "use server";
   const data = settingsSchema.parse(Object.fromEntries(formData));

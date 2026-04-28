@@ -6,6 +6,8 @@ import { ConfirmButton } from "@/components/ConfirmButton";
 import { formatCurrency } from "@/lib/format";
 import { logActivity } from "@/lib/logger";
 
+export const dynamic = 'force-dynamic';
+
 async function createFeeStructure(formData: FormData) {
   "use server";
   const data = feeStructureSchema.parse(Object.fromEntries(formData));

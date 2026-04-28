@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(npm run *)",
+      "Bash(npx playwright *)",
+      "Bash(npx next *)",
+      "Bash(curl *)",
+      "Bash(PLAYWRIGHT_TEST_BASE_URL=http://127.0.0.1:3002 npx playwright *)",
+      "Bash(netstat -ano)",
+      "Bash(awk '/LISTENING/ && /:3000 |:3001 |:3002 / {print $5}')",
+      "Bash(xargs -r taskkill //F //PID)",
+      "Bash(findstr \"LISTENING\")",
+      "Bash(findstr \":3000 :3001 :3002\")",
+      "Bash(taskkill *)"
+    ]
+  }
+}

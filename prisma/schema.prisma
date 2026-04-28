@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Standard {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String         @unique
+  description   String?
+  students      Student[]
+  feeStructures FeeStructure[]
+  payments      Payment[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Student {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  studentCode     String    @unique
+  fullName        String
+  standardId      String    @db.ObjectId
+  guardianName    String
+  contactNumber   String
+  whatsappNumber  String?
+  email           String?
+  address         String?
+  admissionDate   DateTime
+  status          String    @default("active")
+  notes           String?
+  customFeeAmount Int?
+  standard        Standard  @relation(fields: [standardId], references: [id], onDelete: Restrict)
+  payments        Payment[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model FeeStructure {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  standardId   String   @db.ObjectId
+  feeType      String
+  amount       Int
+  billingCycle String
+  standard     Standard @relation(fields: [standardId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([standardId, feeType])
+}
+
+model Payment {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  paymentCode    String   @unique
+  invoiceNumber  String   @unique
+  studentId      String   @db.ObjectId
+  standardId     String   @db.ObjectId
+  feeType        String
+  feePeriod      String
+  amountReceived Int
+  expectedAmount Int
+  paymentDate    DateTime
+  paymentMode    String
+  receivedBy     String
+  notes          String?
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  standard       Standard @relation(fields: [standardId], references: [id], onDelete: Restrict)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Settings {
+  id            String   @id @default("default") @map("_id") // MongoDB requires _id
+  className     String
+  address       String?
+  contactNumber String?
+  email         String?
+  invoicePrefix String   @default("SE")
+  currency      String   @default("INR")
+  logoUrl       String?
+  updatedAt     DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  action    String
+  entity    String
+  details   String
+  createdAt DateTime @default(now())
+}

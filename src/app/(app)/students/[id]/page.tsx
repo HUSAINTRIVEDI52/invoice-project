@@ -5,6 +5,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { calculatePendingForStudent } from "@/lib/reports";
 
 export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
 export default async function StudentProfilePage({ params }: { params: { id: string } }) {
   const [student, settings] = await Promise.all([

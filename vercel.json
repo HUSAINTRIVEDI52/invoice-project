@@ -1,0 +1,7 @@
+{
+  "buildCommand": "prisma generate && next build",
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "SESSION_SECRET": "@session_secret"
+  }
+}

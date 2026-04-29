@@ -5,6 +5,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 
 export const runtime = "nodejs";
 export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
 export async function GET(_: Request, { params }: { params: { paymentId: string } }) {
   const [payment, settings] = await Promise.all([

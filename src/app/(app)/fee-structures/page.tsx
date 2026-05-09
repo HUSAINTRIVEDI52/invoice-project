@@ -1,8 +1,10 @@
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { feeStructureSchema } from "@/lib/validation";
 import { SelectInput, TextInput } from "@/components/FormField";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import { formatCurrency } from "@/lib/format";
 import { logActivity } from "@/lib/logger";
 
@@ -19,6 +21,7 @@ async function createFeeStructure(formData: FormData) {
   });
   await logActivity("Updated", "Fee Structure", `Set ${fee.feeType} for ${fee.standard.name} to ${fee.amount} (${fee.billingCycle})`);
   revalidatePath("/fee-structures");
+  redirect("/fee-structures?toast=Fee%20saved%20successfully");
 }
 
 async function deleteFeeStructure(id: string) {
@@ -26,6 +29,7 @@ async function deleteFeeStructure(id: string) {
   const fee = await prisma.feeStructure.delete({ where: { id }, include: { standard: true } });
   await logActivity("Deleted", "Fee Structure", `Removed ${fee.feeType} from ${fee.standard.name}`);
   revalidatePath("/fee-structures");
+  redirect("/fee-structures?toast=Fee%20deleted%20successfully");
 }
 
 export default async function FeeStructuresPage() {
@@ -41,10 +45,10 @@ export default async function FeeStructuresPage() {
         <form action={createFeeStructure} className="google-card space-y-4 p-6">
           <div><h2 className="google-section-title">Add fee</h2><p className="google-muted">Configure fee amount for a standard.</p></div>
           <SelectInput label="Standard" name="standardId" required>{standards.map((standard) => <option key={standard.id} value={standard.id}>{standard.name}</option>)}</SelectInput>
-          <TextInput label="Fee type" name="feeType" defaultValue="Monthly Tuition Fee" required />
+          <TextInput label="Fee type" name="feeType" defaultValue="Monthly Fee" required />
           <TextInput label="Amount" name="amount" type="number" required />
           <SelectInput label="Billing cycle" name="billingCycle" defaultValue="monthly"><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option><option value="custom">Custom</option></SelectInput>
-          <button className="google-primary-button">Save fee</button>
+          <ConfirmSubmitButton className="google-primary-button" message="Save this fee structure?">Save fee</ConfirmSubmitButton>
         </form>
         <section className="google-card overflow-hidden p-5">
           <h2 className="google-section-title">Configured fees</h2>

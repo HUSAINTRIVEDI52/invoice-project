@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import PDFDocument from "pdfkit";
 import { prisma } from "@/lib/db";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 
 export const runtime = "nodejs";
 export const dynamic = 'force-dynamic';
@@ -19,39 +19,51 @@ export async function GET(_: Request, { params }: { params: { paymentId: string 
   doc.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
   const done = new Promise<Buffer>((resolve) => doc.on("end", () => resolve(Buffer.concat(chunks))));
 
-  doc.fontSize(24).text(settings?.className ?? "Silver Education", { align: "center" });
-  doc.moveDown(0.3).fontSize(10).fillColor("gray").text(settings?.address ?? "", { align: "center" });
-  doc.text(`${settings?.contactNumber ?? ""} ${settings?.email ? `· ${settings.email}` : ""}`, { align: "center" });
-  doc.moveDown(2).fillColor("black").fontSize(18).text("Fee Receipt / Invoice");
-  doc.moveDown();
-  doc.fontSize(11);
-  doc.text(`Invoice Number: ${payment.invoiceNumber}`);
-  doc.text(`Invoice Date: ${formatDate(payment.paymentDate)}`);
-  doc.text(`Payment Code: ${payment.paymentCode}`);
-  doc.moveDown();
-  doc.text(`Student: ${payment.student.fullName}`);
-  doc.text(`Student ID: ${payment.student.studentCode}`);
-  doc.text(`Standard: ${payment.standard.name}`);
-  doc.text(`Guardian: ${payment.student.guardianName}`);
-  doc.text(`Contact: ${payment.student.contactNumber}`);
-  doc.moveDown();
-  doc.text(`Fee Type: ${payment.feeType}`);
-  doc.text(`Fee Period: ${payment.feePeriod}`);
-  doc.text(`Payment Mode: ${payment.paymentMode}`);
-  doc.text(`Received By: ${payment.receivedBy}`);
-  doc.moveDown();
-  doc.roundedRect(50, doc.y, 495, 70, 8).stroke("#d1d5db");
-  const y = doc.y + 16;
-  doc.fontSize(12).text("Expected Amount", 70, y);
-  doc.text("Amount Received", 230, y);
-  doc.text("Balance", 400, y);
-  doc.fontSize(14).font("Helvetica-Bold");
-  doc.text(formatCurrency(payment.expectedAmount, settings?.currency), 70, y + 25);
-  doc.text(formatCurrency(payment.amountReceived, settings?.currency), 230, y + 25);
-  doc.text(formatCurrency(Math.max(payment.expectedAmount - payment.amountReceived, 0), settings?.currency), 400, y + 25);
-  doc.font("Helvetica").moveDown(5);
-  if (payment.notes) doc.fontSize(10).text(`Notes: ${payment.notes}`);
-  doc.moveDown(3).fontSize(10).fillColor("gray").text("This invoice was generated dynamically by Silver Education Invoice System.", { align: "center" });
+  const institution = settings?.className ?? "MSL";
+  const contactLine = [settings?.contactNumber, settings?.email].filter(Boolean).join(" · ");
+  const formattedAmount = `${settings?.currency === "INR" || !settings?.currency ? "Rs." : settings.currency} ${payment.amountReceived.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+
+  doc.rect(0, 0, 595.28, 116).fill("#064e3b");
+  doc.fillColor("white").font("Helvetica-Bold").fontSize(24).text(institution, 50, 34);
+  doc.font("Helvetica").fontSize(10);
+  if (settings?.address) doc.text(settings.address, 50, 64, { width: 320 });
+  if (contactLine) doc.text(contactLine, 50, 80, { width: 320 });
+  doc.font("Helvetica-Bold").fontSize(16).text("Fee Receipt", 395, 38, { width: 150, align: "right" });
+  doc.font("Helvetica").fontSize(10).text(payment.invoiceNumber, 395, 62, { width: 150, align: "right" });
+
+  doc.fillColor("#111827").font("Helvetica");
+  doc.roundedRect(50, 145, 495, 92, 12).stroke("#d1d5db");
+  doc.fontSize(9).fillColor("#6b7280").text("Receipt Date", 72, 166);
+  doc.fillColor("#111827").fontSize(11).text(formatDate(payment.paymentDate), 72, 184);
+  doc.fontSize(9).fillColor("#6b7280").text("Payment Type", 245, 166);
+  doc.fillColor("#111827").fontSize(11).text(payment.feeType, 245, 184);
+  doc.fontSize(9).fillColor("#6b7280").text("Payment Mode", 405, 166);
+  doc.fillColor("#111827").fontSize(11).text(payment.paymentMode, 405, 184);
+
+  doc.font("Helvetica-Bold").fontSize(13).fillColor("#064e3b").text("Student Details", 50, 270);
+  doc.moveTo(50, 292).lineTo(545, 292).stroke("#d1d5db");
+  doc.font("Helvetica").fontSize(11).fillColor("#111827");
+  doc.text(`Name: ${payment.student.fullName}`, 50, 312);
+  doc.text(`Standard: ${payment.standard.name}`, 50, 334);
+  doc.text(`Contact: ${payment.student.contactNumber}`, 320, 312);
+
+  doc.font("Helvetica-Bold").fontSize(13).fillColor("#064e3b").text("Fee Details", 50, 405);
+  doc.moveTo(50, 427).lineTo(545, 427).stroke("#d1d5db");
+  doc.font("Helvetica").fontSize(11).fillColor("#111827");
+  doc.text(`Payment Type: ${payment.feeType}`, 50, 447);
+  doc.text(`Fee Period: ${payment.feePeriod}`, 50, 469);
+  doc.text(`Received By: ${payment.receivedBy}`, 50, 491);
+
+  doc.roundedRect(340, 440, 205, 82, 12).fillAndStroke("#ecfdf5", "#a7f3d0");
+  doc.fillColor("#047857").font("Helvetica").fontSize(10).text("Amount Paid", 362, 462);
+  doc.fillColor("#064e3b").font("Helvetica-Bold").fontSize(22).text(formattedAmount, 362, 482, { width: 160 });
+
+  if (payment.notes) {
+    doc.fillColor("#374151").font("Helvetica").fontSize(10).text(`Notes: ${payment.notes}`, 50, 550, { width: 495 });
+  }
+
+  doc.moveTo(50, 760).lineTo(545, 760).stroke("#e5e7eb");
+  doc.fillColor("#6b7280").fontSize(9).text("Thank you. This receipt confirms payment received for the stated fee period.", 50, 774, { align: "center", width: 495 });
   doc.end();
 
   const pdf = await done;

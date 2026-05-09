@@ -1,27 +1,44 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { studentSchema } from "@/lib/validation";
-import { SelectInput, TextArea, TextInput } from "@/components/FormField";
+import { SelectInput, TextInput } from "@/components/FormField";
 import { ConfirmButton } from "@/components/ConfirmButton";
+import { ConfirmSubmitButton } from "@/components/ConfirmSubmitButton";
 import { logActivity } from "@/lib/logger";
 
 export const dynamic = 'force-dynamic';
 
 async function createStudent(formData: FormData) {
   "use server";
-  const parsed = studentSchema.parse(Object.fromEntries(formData));
+  const raw = Object.fromEntries(formData);
+  const nextCount = await prisma.student.count();
+  const studentCode = `MSL-STU-${String(nextCount + 1).padStart(3, "0")}`;
+  const data = {
+    ...raw,
+    studentCode,
+    guardianName: String(raw.fullName ?? "Student"),
+    whatsappNumber: "",
+    email: "",
+    address: "",
+    admissionDate: new Date().toISOString().slice(0, 10),
+    notes: "",
+  };
+  const parsed = studentSchema.parse(data);
   const student = await prisma.student.create({
     data: {
       ...parsed,
+      contactNumber: parsed.contactNumber ?? "",
       admissionDate: new Date(parsed.admissionDate),
-      email: parsed.email || null,
+      email: null,
       customFeeAmount: parsed.customFeeAmount === "" ? null : parsed.customFeeAmount,
     },
     include: { standard: true },
   });
   await logActivity("Created", "Student", `Added student ${student.fullName} (${student.studentCode}) to ${student.standard.name}`);
   revalidatePath("/students");
+  redirect("/students?toast=Student%20saved%20successfully");
 }
 
 async function deleteStudent(id: string) {
@@ -29,6 +46,7 @@ async function deleteStudent(id: string) {
   const student = await prisma.student.delete({ where: { id }, include: { standard: true } });
   await logActivity("Deleted", "Student", `Removed student ${student.fullName} (${student.studentCode}) from ${student.standard.name}`);
   revalidatePath("/students");
+  redirect("/students?toast=Student%20deleted%20successfully");
 }
 
 export default async function StudentsPage({ searchParams }: { searchParams: { q?: string; standardId?: string } }) {
@@ -54,7 +72,7 @@ export default async function StudentsPage({ searchParams }: { searchParams: { q
         <div className="relative">
           <span className="premium-pill">Student management</span>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">Students</h1>
-          <p className="mt-2 max-w-2xl text-slate-500">Create polished student records and browse the class strength standard-wise.</p>
+          <p className="mt-2 max-w-2xl text-slate-500">Create polished student records and browse standard-wise.</p>
         </div>
       </div>
       <details className="group google-card overflow-hidden shadow-premium">
@@ -67,22 +85,15 @@ export default async function StudentsPage({ searchParams }: { searchParams: { q
           <span className="hidden rounded-full bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-700 group-open:inline-flex">Close form</span>
         </summary>
         <form action={createStudent} className="border-t border-slate-100 p-5 pt-6">
-          <div className="grid gap-4 md:grid-cols-3">
-            <TextInput label="Student code" name="studentCode" placeholder="SE-STU-002" required />
+          <div className="grid gap-4 md:grid-cols-2">
             <TextInput label="Full name" name="fullName" required />
             <SelectInput label="Standard" name="standardId" defaultValue={searchParams.standardId ?? ""} required><option value="" disabled>Select standard</option>{standards.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</SelectInput>
-            <TextInput label="Guardian name" name="guardianName" required />
-            <TextInput label="Contact number" name="contactNumber" required />
-            <TextInput label="WhatsApp number" name="whatsappNumber" />
-            <TextInput label="Email" name="email" type="email" />
-            <TextInput label="Admission date" name="admissionDate" type="date" required />
+            <TextInput label="Contact number" name="contactNumber" />
             <SelectInput label="Status" name="status" defaultValue="active"><option value="active">Active</option><option value="inactive">Inactive</option><option value="completed">Completed</option><option value="left">Left</option></SelectInput>
             <TextInput label="Custom fee amount" name="customFeeAmount" type="number" />
-            <TextInput label="Address" name="address" />
-            <TextArea label="Notes" name="notes" rows={1} />
           </div>
           <div className="mt-5 flex justify-end">
-            <button className="google-primary-button">Save student</button>
+            <ConfirmSubmitButton className="google-primary-button" message="Add this student?">Save student</ConfirmSubmitButton>
           </div>
         </form>
       </details>
@@ -103,8 +114,8 @@ export default async function StudentsPage({ searchParams }: { searchParams: { q
           ))}
         </div>
         <form className="mb-5 flex flex-wrap gap-3">
-          <input name="q" placeholder="Search students" defaultValue={searchParams.q} className="rounded-full border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-100" />
-          <select name="standardId" defaultValue={searchParams.standardId} className="rounded-full border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-brand-600 focus:ring-4 focus:ring-brand-100"><option value="">All standards</option>{standards.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select>
+          <input name="q" placeholder="Search students" defaultValue={searchParams.q} className="premium-field" />
+          <select name="standardId" defaultValue={searchParams.standardId} className="premium-field"><option value="">All standards</option>{standards.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select>
           <button className="google-secondary-button">Filter</button>
         </form>
         <div className="premium-table-wrap">

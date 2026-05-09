@@ -1,5 +1,8 @@
+import { loadEnvConfig } from "@next/env";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+
+loadEnvConfig(process.cwd());
 
 const prisma = new PrismaClient();
 
@@ -15,51 +18,51 @@ const standards = [
 ];
 
 const students = [
-  ["SE-STU-001", "Aarav Patel", "Standard 10", "Rakesh Patel", "9876500001", "2026-04-01"],
-  ["SE-STU-002", "Diya Shah", "Standard 8", "Nilesh Shah", "9876500002", "2026-04-02"],
-  ["SE-STU-003", "Vivaan Mehta", "Standard 9", "Ketan Mehta", "9876500003", "2026-04-03"],
-  ["SE-STU-004", "Anaya Desai", "Standard 10", "Jignesh Desai", "9876500004", "2026-04-04"],
-  ["SE-STU-005", "Kabir Trivedi", "Standard 11 Commerce", "Paresh Trivedi", "9876500005", "2026-04-05"],
-  ["SE-STU-006", "Riya Joshi", "Standard 12 Commerce", "Manish Joshi", "9876500006", "2026-04-06"],
-  ["SE-STU-007", "Arjun Parmar", "Standard 7", "Bhavesh Parmar", "9876500007", "2026-04-07"],
-  ["SE-STU-008", "Isha Solanki", "Standard 6", "Mahesh Solanki", "9876500008", "2026-04-08"],
-  ["SE-STU-009", "Krish Thakkar", "Standard 5", "Amit Thakkar", "9876500009", "2026-04-09"],
-  ["SE-STU-010", "Myra Vyas", "Standard 8", "Sanjay Vyas", "9876500010", "2026-04-10"],
-  ["SE-STU-011", "Dev Patel", "Standard 9", "Hiren Patel", "9876500011", "2026-04-11"],
-  ["SE-STU-012", "Tara Shah", "Standard 11 Commerce", "Raj Shah", "9876500012", "2026-04-12"],
+  ["MSL-STU-001", "Aarav Patel", "Standard 10", "Rakesh Patel", "9876500001", "2026-04-01"],
+  ["MSL-STU-002", "Diya Shah", "Standard 8", "Nilesh Shah", "9876500002", "2026-04-02"],
+  ["MSL-STU-003", "Vivaan Mehta", "Standard 9", "Ketan Mehta", "9876500003", "2026-04-03"],
+  ["MSL-STU-004", "Anaya Desai", "Standard 10", "Jignesh Desai", "9876500004", "2026-04-04"],
+  ["MSL-STU-005", "Kabir Trivedi", "Standard 11 Commerce", "Paresh Trivedi", "9876500005", "2026-04-05"],
+  ["MSL-STU-006", "Riya Joshi", "Standard 12 Commerce", "Manish Joshi", "9876500006", "2026-04-06"],
+  ["MSL-STU-007", "Arjun Parmar", "Standard 7", "Bhavesh Parmar", "9876500007", "2026-04-07"],
+  ["MSL-STU-008", "Isha Solanki", "Standard 6", "Mahesh Solanki", "9876500008", "2026-04-08"],
+  ["MSL-STU-009", "Krish Thakkar", "Standard 5", "Amit Thakkar", "9876500009", "2026-04-09"],
+  ["MSL-STU-010", "Myra Vyas", "Standard 8", "Sanjay Vyas", "9876500010", "2026-04-10"],
+  ["MSL-STU-011", "Dev Patel", "Standard 9", "Hiren Patel", "9876500011", "2026-04-11"],
+  ["MSL-STU-012", "Tara Shah", "Standard 11 Commerce", "Raj Shah", "9876500012", "2026-04-12"],
 ];
 
 const paymentModes = ["Cash", "UPI", "Bank Transfer", "Cash", "UPI", "Card"];
 const months = ["April 2026", "May 2026", "June 2026"];
 
 async function main() {
-  const email = process.env.SEED_ADMIN_EMAIL ?? "admin@silvereducation.local";
+  const email = process.env.SEED_ADMIN_EMAIL ?? "admin@msl.local";
   const password = process.env.SEED_ADMIN_PASSWORD ?? "admin12345";
   const passwordHash = await bcrypt.hash(password, 10);
 
   await prisma.admin.upsert({
     where: { email },
-    update: { name: "Silver Education Admin", passwordHash },
-    create: { email, name: "Silver Education Admin", passwordHash },
+    update: { name: "MSL Admin", passwordHash },
+    create: { email, name: "MSL Admin", passwordHash },
   });
 
   await prisma.settings.upsert({
     where: { id: "default" },
     update: {
-      className: "Silver Education",
-      address: "Silver Education, Main Road, Ahmedabad",
+      className: "MSL",
+      address: "MSL, Main Road",
       contactNumber: "9876543210",
       email,
-      invoicePrefix: "SE",
+      invoicePrefix: "MSL",
       currency: "INR",
     },
     create: {
       id: "default",
-      className: "Silver Education",
-      address: "Silver Education, Main Road, Ahmedabad",
+      className: "MSL",
+      address: "MSL, Main Road",
       contactNumber: "9876543210",
       email,
-      invoicePrefix: "SE",
+      invoicePrefix: "MSL",
       currency: "INR",
     },
   });
@@ -69,21 +72,21 @@ async function main() {
   for (const item of standards) {
     const standard = await prisma.standard.upsert({
       where: { name: item.name },
-      update: { description: `${item.name} tuition batch` },
-      create: { name: item.name, description: `${item.name} tuition batch` },
+      update: { description: `${item.name} batch` },
+      create: { name: item.name, description: `${item.name} batch` },
     });
     standardByName.set(item.name, { id: standard.id, amount: item.amount });
 
     await prisma.feeStructure.upsert({
-      where: { standardId_feeType: { standardId: standard.id, feeType: "Monthly Tuition Fee" } },
+      where: { standardId_feeType: { standardId: standard.id, feeType: "Monthly Fee" } },
       update: { amount: item.amount, billingCycle: "monthly" },
-      create: { standardId: standard.id, feeType: "Monthly Tuition Fee", amount: item.amount, billingCycle: "monthly" },
+      create: { standardId: standard.id, feeType: "Monthly Fee", amount: item.amount, billingCycle: "monthly" },
     });
 
     await prisma.feeStructure.upsert({
-      where: { standardId_feeType: { standardId: standard.id, feeType: "Exam Fee" } },
+      where: { standardId_feeType: { standardId: standard.id, feeType: "Setup Fee" } },
       update: { amount: 500, billingCycle: "custom" },
-      create: { standardId: standard.id, feeType: "Exam Fee", amount: 500, billingCycle: "custom" },
+      create: { standardId: standard.id, feeType: "Setup Fee", amount: 500, billingCycle: "custom" },
     });
   }
 
@@ -122,7 +125,7 @@ async function main() {
   let sequence = 1;
   for (const student of createdStudents) {
     for (const [monthIndex, feePeriod] of months.entries()) {
-      const invoiceNumber = `SE-2026-${String(sequence).padStart(4, "0")}`;
+      const invoiceNumber = `MSL-2026-${String(sequence).padStart(4, "0")}`;
       const paymentCode = `PAY-2026-${String(sequence).padStart(4, "0")}`;
       const isPartial = (sequence + monthIndex) % 5 === 0;
       const amountReceived = isPartial ? student.standardAmount - 500 : student.standardAmount;
@@ -141,14 +144,14 @@ async function main() {
           invoiceNumber,
           studentId: student.id,
           standardId: student.standardId,
-          feeType: "Monthly Tuition Fee",
+          feeType: "Monthly Fee",
           feePeriod,
           amountReceived,
           expectedAmount: student.standardAmount,
           paymentDate: new Date(2026, monthIndex + 3, 5 + (sequence % 20)),
           paymentMode: paymentModes[sequence % paymentModes.length],
           receivedBy: "Admin",
-          notes: isPartial ? "Partial sample payment" : "Sample payment",
+          notes: isPartial ? "Partial fee payment" : "Sample fee payment",
         },
       });
       sequence += 1;

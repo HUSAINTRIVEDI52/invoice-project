@@ -3,6 +3,6 @@ import { buildSequenceCode } from "./invoices";
 
 describe("buildSequenceCode", () => {
   it("formats invoice-style sequence codes", () => {
-    expect(buildSequenceCode("SE", 2026, 7)).toBe("SE-2026-0007");
+    expect(buildSequenceCode("MSL", 2026, 7)).toBe("MSL-2026-0007");
   });
 });

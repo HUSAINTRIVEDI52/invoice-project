@@ -1,0 +1,49 @@
+{
+  "id": "invoice-system-environment",
+  "name": "Invoice System Test Environment",
+  "values": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "test_admin_email",
+      "value": "admin@msl.local",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "test_admin_password",
+      "value": "admin123",
+      "type": "secret",
+      "enabled": true
+    },
+    {
+      "key": "test_student_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "test_payment_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "test_standard_id",
+      "value": "",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

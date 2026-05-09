@@ -4,7 +4,7 @@ export function buildSequenceCode(prefix: string, year: number, sequence: number
   return `${prefix}-${year}-${String(sequence).padStart(4, "0")}`;
 }
 
-export async function nextInvoiceNumber(prefix = "SE", date = new Date()) {
+export async function nextInvoiceNumber(prefix = "MSL", date = new Date()) {
   const year = date.getFullYear();
   const count = await prisma.payment.count({
     where: {

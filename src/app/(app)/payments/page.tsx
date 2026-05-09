@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { ConfirmButton } from "@/components/ConfirmButton";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -12,6 +13,7 @@ async function deletePayment(id: string) {
   const payment = await prisma.payment.delete({ where: { id }, include: { student: true } });
   await logActivity("Deleted", "Payment", `Deleted payment ${payment.invoiceNumber} for ${payment.student.fullName}`);
   revalidatePath("/payments");
+  redirect("/payments?toast=Payment%20deleted%20successfully");
 }
 
 export default async function PaymentsPage({ searchParams }: { searchParams: { q?: string; mode?: string } }) {

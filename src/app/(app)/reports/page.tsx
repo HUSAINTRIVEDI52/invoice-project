@@ -29,16 +29,16 @@ export default async function ReportsPage({ searchParams }: { searchParams: Repo
   }
 
   const pending = students.map((student) => ({ student, amount: calculatePendingForStudent(student) })).filter((row) => row.amount > 0);
-  const fieldClass = "mt-1.5 w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm shadow-sm outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100";
+  const fieldClass = "mt-2 w-full rounded-2xl border border-slate-200/90 bg-white/90 px-4 py-3 text-sm font-medium shadow-sm outline-none transition hover:border-brand-200 focus:border-brand-500 focus:ring-4 focus:ring-brand-100";
   const filterFields = (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-7">
-      <label className="block"><span className="text-sm font-semibold text-slate-700">Standard</span><select name="standardId" defaultValue={searchParams.standardId ?? ""} className={fieldClass}><option value="">All standards</option>{standards.map((standard) => <option key={standard.id} value={standard.id}>{standard.name}</option>)}</select></label>
-      <label className="block"><span className="text-sm font-semibold text-slate-700">Payment mode</span><select name="mode" defaultValue={searchParams.mode ?? ""} className={fieldClass}><option value="">All modes</option>{paymentModes.map((mode) => <option key={mode} value={mode}>{mode}</option>)}</select></label>
-      <label className="block"><span className="text-sm font-semibold text-slate-700">Specific day</span><input name="date" type="date" defaultValue={searchParams.date ?? ""} className={fieldClass} /></label>
-      <label className="block"><span className="text-sm font-semibold text-slate-700">Month</span><input name="month" type="month" defaultValue={searchParams.month ?? ""} className={fieldClass} /></label>
-      <label className="block"><span className="text-sm font-semibold text-slate-700">Year</span><input name="year" type="number" min="2000" max="2100" placeholder="2026" defaultValue={searchParams.year ?? ""} className={fieldClass} /></label>
-      <label className="block"><span className="text-sm font-semibold text-slate-700">From</span><input name="from" type="date" defaultValue={searchParams.from ?? ""} className={fieldClass} /></label>
-      <label className="block"><span className="text-sm font-semibold text-slate-700">To</span><input name="to" type="date" defaultValue={searchParams.to ?? ""} className={fieldClass} /></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">Standard</span><select name="standardId" defaultValue={searchParams.standardId ?? ""} className={fieldClass}><option value="">All standards</option>{standards.map((standard) => <option key={standard.id} value={standard.id}>{standard.name}</option>)}</select></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">Payment mode</span><select name="mode" defaultValue={searchParams.mode ?? ""} className={fieldClass}><option value="">All modes</option>{paymentModes.map((mode) => <option key={mode} value={mode}>{mode}</option>)}</select></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">Specific day</span><input name="date" type="date" defaultValue={searchParams.date ?? ""} className={fieldClass} /></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">Month</span><input name="month" type="month" defaultValue={searchParams.month ?? ""} className={fieldClass} /></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">Year</span><input name="year" type="number" min="2000" max="2100" placeholder="2026" defaultValue={searchParams.year ?? ""} className={fieldClass} /></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">From</span><input name="from" type="date" defaultValue={searchParams.from ?? ""} className={fieldClass} /></label>
+      <label className="block"><span className="text-sm font-bold text-slate-700">To</span><input name="to" type="date" defaultValue={searchParams.to ?? ""} className={fieldClass} /></label>
     </div>
   );
   const filterActions = (
@@ -57,10 +57,10 @@ export default async function ReportsPage({ searchParams }: { searchParams: Repo
           <div>
             <span className="premium-pill">Financial analytics</span>
             <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Reports</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">Review collections by standard and payment mode, apply precise filters, and export professional records.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">Review fee collections by standard and payment mode, apply precise filters, and export professional records.</p>
           </div>
           <div className="rounded-3xl bg-gradient-to-br from-brand-600 to-brand-900 p-4 text-white shadow-glow">
-            <p className="text-xs font-semibold uppercase tracking-wide text-blue-100">Active view</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100">Active view</p>
             <p className="mt-1 max-w-48 text-sm font-semibold">{filterLabel}</p>
           </div>
         </div>
@@ -118,7 +118,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Repo
           <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="google-section-title">Standard-wise collection</h2>
-              <p className="google-muted">Collection grouped by class or batch.</p>
+              <p className="google-muted">Collection grouped by standard or batch.</p>
             </div>
             <span className="premium-pill">{byStandard.size} standards</span>
           </div>
@@ -144,7 +144,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Repo
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="google-section-title">Pending fees</h2>
-            <p className="google-muted">Students with remaining balance.</p>
+            <p className="google-muted">Students with remaining fee balance.</p>
           </div>
         </div>
         <div className="mt-4 premium-table-wrap"><table className="google-table"><thead><tr><th>Student</th><th>Standard</th><th>Pending</th></tr></thead><tbody>{pending.map(({ student, amount }) => <tr key={student.id}><td>{student.fullName}</td><td>{student.standard.name}</td><td className="font-semibold text-red-700">{formatCurrency(amount, settings?.currency)}</td></tr>)}</tbody></table></div>

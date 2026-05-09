@@ -22,7 +22,7 @@ export async function GET(request: Request) {
   const done = new Promise<Buffer>((resolve) => doc.on("end", () => resolve(Buffer.concat(chunks))));
 
   const total = payments.reduce((sum, payment) => sum + payment.amountReceived, 0);
-  doc.fontSize(20).text(`${settings?.className ?? "Silver Education"} Collection Report`);
+  doc.fontSize(20).text(`${settings?.className ?? "MSL"} Collection Report`);
   doc.moveDown(0.4).fontSize(10).fillColor("gray").text(`Filters: ${filterLabel}`);
   doc.text(`Generated: ${formatDate(new Date())}`);
   doc.moveDown().fillColor("black").fontSize(14).text(`Total Collection: ${formatCurrency(total, settings?.currency)}   Payments: ${payments.length}`);
@@ -68,7 +68,7 @@ export async function GET(request: Request) {
   return new NextResponse(body, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${settings?.invoicePrefix ?? "SE"}-collection-report.pdf"`,
+      "Content-Disposition": `attachment; filename="${settings?.invoicePrefix ?? "MSL"}-collection-report.pdf"`,
     },
   });
 }

@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
   const total = payments.reduce((sum, payment) => sum + payment.amountReceived, 0);
   const rows = [
-    ["Silver Education Collection Report"],
+    ["MSL Collection Report"],
     [`Filters: ${filterLabel}`],
     [`Total Collection: ${total}`],
     [],
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${settings?.invoicePrefix ?? "SE"}-collection-report.csv"`,
+      "Content-Disposition": `attachment; filename="${settings?.invoicePrefix ?? "MSL"}-collection-report.csv"`,
     },
   });
 }

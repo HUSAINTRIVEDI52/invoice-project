@@ -16,28 +16,45 @@ html {
 
 body {
   margin: 0;
+  min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(210, 227, 252, 0.9), transparent 34rem),
-    radial-gradient(circle at top right, rgba(251, 188, 4, 0.14), transparent 28rem),
-    linear-gradient(180deg, #f8fafd 0%, #eef4ff 46%, #f8fafd 100%);
-  color: #202124;
+    radial-gradient(circle at 8% 8%, rgba(16, 185, 129, 0.18), transparent 26rem),
+    radial-gradient(circle at 92% 12%, rgba(79, 70, 229, 0.14), transparent 28rem),
+    radial-gradient(circle at 72% 88%, rgba(20, 184, 166, 0.12), transparent 30rem),
+    linear-gradient(135deg, #f2fbf8 0%, #eefbf6 34%, #f2f5ff 68%, #f8fafc 100%);
+  color: #0f172a;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.58), transparent 42%),
+    linear-gradient(rgba(6, 78, 59, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 78, 59, 0.035) 1px, transparent 1px);
+  background-size: auto, 44px 44px, 44px 44px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent 78%);
 }
 
 input,
 select,
 textarea {
-  color: #202124;
+  color: #0f172a;
 }
 
 ::selection {
-  background: #d2e3fc;
+  background: #a7f3d0;
+  color: #064e3b;
 }
 
 @layer components {
   .google-card {
-    @apply rounded-[1.75rem] border border-white/75 bg-white/90 shadow-card backdrop-blur-xl ring-1 ring-slate-900/[0.02];
+    @apply rounded-[2rem] border border-white/70 bg-white/90 shadow-card backdrop-blur-2xl ring-1 ring-emerald-950/[0.04];
   }
 
   .mobile-scroll {
@@ -45,64 +62,83 @@ textarea {
   }
 
   .premium-page-header {
-    @apply google-card relative overflow-hidden p-6 sm:p-8;
+    @apply google-card relative overflow-hidden p-6 shadow-premium sm:p-8;
   }
 
   .premium-page-header::before {
     content: "";
-    @apply absolute -right-12 -top-16 h-44 w-44 rounded-full bg-brand-100/80 blur-2xl;
+    @apply absolute -right-16 -top-20 h-60 w-60 rounded-full bg-brand-300/50 blur-3xl;
+  }
+
+  .premium-page-header::after {
+    content: "";
+    @apply absolute -bottom-24 left-8 h-52 w-52 rounded-full bg-accent-200/60 blur-3xl;
   }
 
   .premium-hero {
-    @apply relative overflow-hidden rounded-[2rem] border border-white/70 bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 p-6 text-white shadow-glow sm:p-8;
+    @apply relative overflow-hidden rounded-[2rem] border border-white/15 bg-gradient-to-br from-slate-950 via-accent-700 to-brand-700 p-6 text-white shadow-glow sm:p-8;
+  }
+
+  .premium-hero::before {
+    content: "";
+    @apply absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-300/25 blur-3xl;
+  }
+
+  .premium-hero::after {
+    content: "";
+    @apply absolute -bottom-24 left-10 h-56 w-56 rounded-full bg-accent-200/20 blur-3xl;
   }
 
   .premium-pill {
-    @apply inline-flex items-center rounded-full border border-white/70 bg-white/80 px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur;
+    @apply inline-flex items-center rounded-full border border-brand-200/80 bg-brand-50/80 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-brand-800 shadow-sm backdrop-blur;
   }
 
   .premium-table-wrap {
-    @apply overflow-x-auto rounded-[1.4rem] border border-slate-200/80 bg-white shadow-sm;
+    @apply overflow-x-auto rounded-[1.6rem] border border-slate-200/80 bg-white/90 shadow-sm backdrop-blur;
   }
 
   .premium-field {
-    @apply rounded-full border border-slate-200 bg-white/90 px-4 py-2.5 text-sm shadow-sm outline-none transition placeholder:text-slate-400 hover:border-brand-100 hover:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-100;
+    @apply rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-2.5 text-sm font-medium shadow-sm outline-none transition placeholder:text-slate-400 hover:border-brand-300 hover:bg-white focus:border-brand-600 focus:ring-4 focus:ring-brand-200/70;
   }
 
   .google-section-title {
-    @apply text-xl font-semibold tracking-tight text-slate-950;
+    @apply text-xl font-semibold tracking-tight text-stone-950;
   }
 
   .google-muted {
-    @apply text-sm leading-6 text-slate-500;
+    @apply text-sm leading-6 text-stone-500;
   }
 
   .google-primary-button {
-    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-brand-600 to-brand-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition hover:-translate-y-0.5 hover:from-brand-700 hover:to-brand-900 hover:shadow-glow focus:outline-none focus:ring-4 focus:ring-brand-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
+    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-slate-950 via-accent-700 to-brand-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-brand-800/25 transition duration-200 hover:-translate-y-0.5 hover:shadow-glow focus:outline-none focus:ring-4 focus:ring-brand-200/80 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0;
   }
 
   .google-secondary-button {
-    @apply inline-flex items-center justify-center rounded-full border border-slate-200 bg-white/90 px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus:ring-4 focus:ring-brand-100;
+    @apply inline-flex items-center justify-center rounded-full border border-slate-200/90 bg-white/90 px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus:outline-none focus:ring-4 focus:ring-brand-200/80;
   }
 
   .google-table {
-    @apply w-full text-left text-sm;
+    @apply w-full border-separate border-spacing-0 text-left text-sm;
   }
 
   .google-table thead {
-    @apply bg-gradient-to-r from-slate-50 to-brand-50/50 text-xs uppercase tracking-wide text-slate-500;
+    @apply bg-gradient-to-r from-slate-950 via-accent-700 to-brand-700 text-xs uppercase tracking-[0.16em] text-emerald-50;
   }
 
   .google-table th {
-    @apply px-4 py-3.5 font-semibold;
+    @apply px-4 py-4 font-semibold first:rounded-tl-[1.4rem] last:rounded-tr-[1.4rem];
   }
 
   .google-table td {
-    @apply px-4 py-3.5;
+    @apply px-4 py-4 align-middle text-stone-700;
   }
 
   .google-table tbody tr {
-    @apply border-t border-slate-100 transition hover:bg-brand-50/50;
+    @apply border-t border-stone-100 transition duration-200 hover:bg-brand-50/70;
+  }
+
+  .google-table tbody tr + tr td {
+    @apply border-t border-stone-100;
   }
 }
 

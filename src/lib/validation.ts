@@ -10,7 +10,7 @@ export const studentSchema = z.object({
   fullName: z.string().min(2),
   standardId: z.string().min(1),
   guardianName: z.string().min(2),
-  contactNumber: z.string().min(7),
+  contactNumber: z.string().optional().or(z.literal("")),
   whatsappNumber: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
   address: z.string().optional(),
